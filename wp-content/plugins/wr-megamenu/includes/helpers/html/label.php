@@ -10,19 +10,16 @@
  * Technical Support:  Feedback - http://www.woorockets.com
  */
 
-class WR_Megamenu_Helpers_Html_Button extends WR_Megamenu_Helpers_Html {
+class WR_Megamenu_Helpers_Html_Label extends WR_Megamenu_Helpers_Html {
 	/**
-	 * Button
+	 * Label
 	 * @param type $element
 	 * @return string
 	 */
 	static function render( $element ) {
 		$element = parent::get_extra_info( $element );
-		$label = parent::get_label( $element );
-		$element['class'] = ( $element['class'] ) ? $element['class'] . ' btn' : 'btn';
-		$action_type = isset( $element['action_type'] ) ? " data-action-type = '{$element["action_type"]}' " : '';
-		$action = isset( $element['action'] ) ? " data-action = '{$element["action"]}' " : '';
-		$output = "<button class='{$element['class']}' $action_type $action>{$element['std']}</button>";
+		$label   = parent::get_label( $element );
+		$output  = "<span class='add-on input-group-addon {$element['class']}'>{$element['std']}</span>";
 		return parent::final_element( $element, $output, $label );
 	}
 }

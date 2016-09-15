@@ -10,19 +10,22 @@
  * Technical Support:  Feedback - http://www.woorockets.com
  */
 
-class WR_Megamenu_Helpers_Html_Button extends WR_Megamenu_Helpers_Html {
+class WR_Megamenu_Helpers_Html_Text_Area extends WR_Megamenu_Helpers_Html {
 	/**
-	 * Button
+	 * Textarea option
 	 * @param type $element
-	 * @return string
+	 * @return type
 	 */
 	static function render( $element ) {
 		$element = parent::get_extra_info( $element );
 		$label = parent::get_label( $element );
-		$element['class'] = ( $element['class'] ) ? $element['class'] . ' btn' : 'btn';
-		$action_type = isset( $element['action_type'] ) ? " data-action-type = '{$element["action_type"]}' " : '';
-		$action = isset( $element['action'] ) ? " data-action = '{$element["action"]}' " : '';
-		$output = "<button class='{$element['class']}' $action_type $action>{$element['std']}</button>";
+		$element['row'] = ( isset( $element['row'] ) ) ? $element['row'] : '8';
+		$element['col'] = ( isset( $element['col'] ) ) ? $element['col'] : '50';
+		if ( $element['exclude_quote'] == '1' ) {
+			$element['std'] = str_replace( '<wr_quote>', '"', $element['std'] );
+		}
+		$output = "<textarea class='{$element['class']}' id='{$element['id']}' rows='{$element['row']}' cols='{$element['col']}' name='{$element['id']}' DATA_INFO>{$element['std']}</textarea>";
+
 		return parent::final_element( $element, $output, $label );
 	}
 }

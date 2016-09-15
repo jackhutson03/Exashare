@@ -10,19 +10,22 @@
  * Technical Support:  Feedback - http://www.woorockets.com
  */
 
-class WR_Megamenu_Helpers_Html_Button extends WR_Megamenu_Helpers_Html {
+class WR_Megamenu_Helpers_Html_Jsn_Select_Font_Value extends WR_Megamenu_Helpers_Html {
 	/**
-	 * Button
+	 * Selectbox to select font
 	 * @param type $element
-	 * @return string
+	 * @return type
 	 */
 	static function render( $element ) {
+		$selected_value = $element['std'];
+		$element['exclude_class'] = array( 'form-control' );
 		$element = parent::get_extra_info( $element );
 		$label = parent::get_label( $element );
-		$element['class'] = ( $element['class'] ) ? $element['class'] . ' btn' : 'btn';
-		$action_type = isset( $element['action_type'] ) ? " data-action-type = '{$element["action_type"]}' " : '';
-		$action = isset( $element['action'] ) ? " data-action = '{$element["action"]}' " : '';
-		$output = "<button class='{$element['class']}' $action_type $action>{$element['std']}</button>";
+
+		$output  = "<select id='{$element['id']}' class='jsn-fontFace {$element['class']}' data-selected='{$selected_value}' value='{$selected_value}'>";
+		$output .= "<option value='{$selected_value}' selected='selected'>{$selected_value}</option>";
+		$output .= '</select>';
+
 		return parent::final_element( $element, $output, $label );
 	}
 }
