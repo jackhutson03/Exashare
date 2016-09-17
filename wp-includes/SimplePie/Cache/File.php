@@ -43,29 +43,41 @@
  */
 
 /**
- * Base for cache objects
- *
- * Classes to be used with {@see SimplePie_Cache::register()} are expected
- * to implement this interface.
+ * Caches data to the filesystem
  *
  * @package SimplePie
  * @subpackage Caching
  */
-interface SimplePie_Cache_Base
+class SimplePie_Cache_File implements SimplePie_Cache_Base
 {
 	/**
-	 * Feed cache type
+	 * Location string
 	 *
+	 * @see SimplePie::$cache_location
 	 * @var string
 	 */
-	const TYPE_FEED = 'spc';
+	protected $location;
 
 	/**
-	 * Image cache type
+	 * Filename
 	 *
 	 * @var string
 	 */
-	const TYPE_IMAGE = 'spi';
+	protected $filename;
+
+	/**
+	 * File extension
+	 *
+	 * @var string
+	 */
+	protected $extension;
+
+	/**
+	 * File path
+	 *
+	 * @var string
+	 */
+	protected $name;
 
 	/**
 	 * Create a new cache object
@@ -74,7 +86,13 @@ interface SimplePie_Cache_Base
 	 * @param string $name Unique ID for the cache
 	 * @param string $type Either TYPE_FEED for SimplePie data, or TYPE_IMAGE for image data
 	 */
-	public function __construct($location, $name, $type);
+	public function __construct($location, $name, $type)
+	{
+		$this->location = $location;
+		$this->filename = $name;
+		$this->extension = $type;
+		$this->name = "$this->location/$this->filename.$this->extension";
+	}
 
 	/**
 	 * Save data to the cache
@@ -82,33 +100,74 @@ interface SimplePie_Cache_Base
 	 * @param array|SimplePie $data Data to store in the cache. If passed a SimplePie object, only cache the $data property
 	 * @return bool Successfulness
 	 */
-	public function save($data);
+	public function save($data)
+	{
+		if (file_exists($this->name) && is_writeable($this->name) || file_exists($this->location) && is_writeable($this->location))
+		{
+			if ($data instanceof SimplePie)
+			{
+				$data = $data->data;
+			}
+
+			$data = serialize($data);
+			return (bool) file_put_contents($this->name, $data);
+		}
+		return false;
+	}
 
 	/**
 	 * Retrieve the data saved to the cache
 	 *
 	 * @return array Data for SimplePie::$data
 	 */
-	public function load();
+	public function load()
+	{
+		if (file_exists($this->name) && is_readable($this->name))
+		{
+			return unserialize(file_get_contents($this->name));
+		}
+		return false;
+	}
 
 	/**
 	 * Retrieve the last modified time for the cache
 	 *
 	 * @return int Timestamp
 	 */
-	public function mtime();
+	public function mtime()
+	{
+		if (file_exists($this->name))
+		{
+			return filemtime($this->name);
+		}
+		return false;
+	}
 
 	/**
 	 * Set the last modified time to the current time
 	 *
 	 * @return bool Success status
 	 */
-	public function touch();
+	public function touch()
+	{
+		if (file_exists($this->name))
+		{
+			return touch($this->name);
+		}
+		return false;
+	}
 
 	/**
 	 * Remove the cache
 	 *
 	 * @return bool Success status
 	 */
-	public function unlink();
+	public function unlink()
+	{
+		if (file_exists($this->name))
+		{
+			return unlink($this->name);
+		}
+		return false;
+	}
 }
